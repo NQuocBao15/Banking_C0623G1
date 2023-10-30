@@ -1,0 +1,11 @@
+<th:block th:fragment="footer">
+    <script src="../moment.js"></script>
+    <script>
+        var datetimeElements = document.querySelectorAll(".datetime");
+        datetimeElements.forEach(function(element) {
+            var localDateTime = element.textContent;
+            var formattedDateTime = moment(localDateTime).format("DD-MM-YYYY HH:mm:ss");
+            element.textContent = formattedDateTime;
+        });
+    </script>
+</th:block>

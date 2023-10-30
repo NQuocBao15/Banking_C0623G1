@@ -23,6 +23,12 @@
                             Withdraw Histories
                         </button>
                     </a>
+                    <a href="/customers/history-transfer">
+                        <button class="btn btn-outline-light active" type="button">
+                            <i class="fas fa-history"></i>
+                            Transfer Histories
+                        </button>
+                    </a>
                     <a href="/customers">
                         <button class="btn btn-outline-light" type="button">
                             <i class="fas fa-list-ul"></i>
@@ -42,7 +48,7 @@
                 <th>Sender Name</th>
                 <th>Recipient Name</th>
                 <th>Transfer Amount ($)</th>
-                <th>Fees</th>
+                <th>Fees (%)</th>
                 <th>Fees Amount</th>
                 <th>Transaction Amount</th>
                 <th>Date Transfer</th>
@@ -58,13 +64,13 @@
                     <td th:text="${item.fees}"></td>
                     <td th:text="${item.feesAmount}"></td>
                     <td th:text="${item.transactionAmount}"></td>
-                    <td th:text="${item.createAt}"></td>
+                    <td th:text="${item.createAt}" class="datetime"></td>
                 </tr>
             </th:block>
             </tbody>
         </table>
     </div>
 </div>
-
+<th:block th:replace="layout/footer :: footer" />
 </body>
 </html>

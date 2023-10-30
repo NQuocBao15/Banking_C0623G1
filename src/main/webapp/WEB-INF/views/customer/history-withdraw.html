@@ -18,7 +18,7 @@
                         </button>
                     </a>
                     <a href="/customers/history-withdraw">
-                        <button class="btn btn-outline-light" type="button">
+                        <button class="btn btn-outline-light active" type="button">
                             <i class="fas fa-minus"></i>
                             Withdraw Histories
                         </button>
@@ -56,12 +56,14 @@
                     <td th:text="${item.id}"></td>
                     <td th:text="${item.customer.fullName}"></td>
                     <td th:text="${item.amount}"></td>
-                    <td th:text="${item.createAt}"></td>
+                    <td th:text="${item.createAt}" class="datetime"></td>
                 </tr>
             </th:block>
             </tbody>
         </table>
     </div>
 </div>
+
+<th:block th:replace="layout/footer :: footer" />
 </body>
 </html>
