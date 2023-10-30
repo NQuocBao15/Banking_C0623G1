@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Withdraw Histories</title>
+    <th:block th:replace="layout/head :: head" />
+</head>
+<body>
+<div class="container">
+    <header>
+        <nav class="navbar bg-body-tertiary">
+            <div class="container-fluid">
+                <a class="navbar-brand">Transfer Histories</a>
+                <div class="d-flex" style="gap: 10px;">
+                    <a href="/customers/history-deposit">
+                        <button class="btn btn-outline-light" type="button">
+                            <i class="fas fa-plus"></i>
+                            Deposit Histories
+                        </button>
+                    </a>
+                    <a href="/customers/history-withdraw">
+                        <button class="btn btn-outline-light" type="button">
+                            <i class="fas fa-minus"></i>
+                            Withdraw Histories
+                        </button>
+                    </a>
+                    <a href="/customers/history-transfer">
+                        <button class="btn btn-outline-light" type="button">
+                            <i class="fas fa-history"></i>
+                            Transfer Histories
+                        </button>
+                    </a>
+                    <a href="/customers">
+                        <button class="btn btn-outline-light" type="button">
+                            <i class="fas fa-list-ul"></i>
+                            Customers List
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="content">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Full Name</th>
+                <th>Transaction Amount ($)</th>
+                <th>Date Withdraw</th>
+            </tr>
+            </thead>
+            <tbody>
+            <th:block th:each="item : ${withdraws}">
+                <tr>
+                    <td th:text="${item.id}"></td>
+                    <td th:text="${item.customer.fullName}"></td>
+                    <td th:text="${item.amount}"></td>
+                    <td th:text="${item.createAt}"></td>
+                </tr>
+            </th:block>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
