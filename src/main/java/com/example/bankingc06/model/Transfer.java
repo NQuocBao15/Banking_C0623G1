@@ -35,7 +35,7 @@ public class Transfer {
     private BigDecimal transferAmount;
 
     @Column(nullable = false)
-    private Long fees;
+    private long fees = 10;
 
     @Column(nullable = false)
     private BigDecimal feesAmount;

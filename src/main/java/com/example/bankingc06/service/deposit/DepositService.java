@@ -1,8 +1,7 @@
 package com.example.bankingc06.service.deposit;
 
 import com.example.bankingc06.model.Deposit;
-import com.example.bankingc06.model.Transfer;
-import com.example.bankingc06.repository.IDepositRepository;
+import com.example.bankingc06.repository.DepositRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +12,7 @@ import java.util.List;
 @Transactional
 public class DepositService implements IDepositService{
     @Autowired
-    private IDepositRepository depositRepository;
+    private DepositRepository depositRepository;
 
     @Override
     public List<Deposit> findAll() {

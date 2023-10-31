@@ -4,10 +4,10 @@ import com.example.bankingc06.model.Customer;
 import com.example.bankingc06.model.Deposit;
 import com.example.bankingc06.model.Transfer;
 import com.example.bankingc06.model.Withdraw;
-import com.example.bankingc06.repository.ICustomerRepository;
-import com.example.bankingc06.repository.IDepositRepository;
-import com.example.bankingc06.repository.ITransferRepository;
-import com.example.bankingc06.repository.IWithdrawRepository;
+import com.example.bankingc06.repository.CustomerRepository;
+import com.example.bankingc06.repository.DepositRepository;
+import com.example.bankingc06.repository.TransferRepository;
+import com.example.bankingc06.repository.WithdrawRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +15,7 @@ import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,13 +23,18 @@ import java.util.stream.Collectors;
 public class CustomerService implements ICustomerService {
 
     @Autowired
-    private ICustomerRepository customerRepository;
+    private CustomerRepository customerRepository;
     @Autowired
-    private IDepositRepository depositRepository;
+    private DepositRepository depositRepository;
     @Autowired
-    private IWithdrawRepository withdrawRepository;
+    private WithdrawRepository withdrawRepository;
     @Autowired
-    private ITransferRepository transferRepository;
+    private TransferRepository transferRepository;
+    @Override
+    public List<Customer> findAllByDeleted(boolean deleted) {
+        return customerRepository.findAllByDeleted(deleted);
+    }
+
     @Override
     public List<Customer> findAll() {
         return customerRepository.findAll();
@@ -49,12 +55,21 @@ public class CustomerService implements ICustomerService {
 
     @Override
     public void update(Long id, Customer customer) {
-        customerRepository.save(customer);
+        Optional<Customer> existingCustomer = Optional.ofNullable(findById(id));
+        Customer customerUpdate = existingCustomer.get();
+        customerUpdate.setFullName(customer.getFullName());
+        customerUpdate.setEmail(customer.getEmail());
+        customerUpdate.setPhone(customer.getPhone());
+        customerUpdate.setAddress(customer.getAddress());
+        customerRepository.save(customerUpdate);
     }
 
     @Override
     public void removeById(Long id) {
-        customerRepository.deleteById(id);
+        Optional<Customer> existingCustomer = Optional.ofNullable(findById(id));
+        Customer customer = existingCustomer.get();
+        customer.setDeleted(true);
+        customerRepository.save(customer);
     }
 
     @Override
@@ -80,8 +95,8 @@ public class CustomerService implements ICustomerService {
     }
 
     @Override
-    public List<Customer> findAllWithoutId(Long id) {
-        List<Customer> allCustomers = customerRepository.findAll();
+    public List<Customer> findAllWithoutId(Long id, boolean deleted) {
+        List<Customer> allCustomers = customerRepository.findAllByDeleted(deleted);
         List<Customer> customers = allCustomers.stream()
                 .filter(customer -> !customer.getId().equals(id))
                 .collect(Collectors.toList());
@@ -92,6 +107,8 @@ public class CustomerService implements ICustomerService {
     public void processTransfer(Transfer transfer) {
         BigDecimal senderBalance = transfer.getSender().getBalance();
         BigDecimal transferAmount = transfer.getTransferAmount();
+
+        transfer.setFeesAmount(transfer.getTransactionAmount().subtract(transfer.getTransferAmount()));
         BigDecimal feesAmount = transfer.getFeesAmount();
 
         Customer sender = transfer.getSender();

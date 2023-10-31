@@ -32,7 +32,7 @@ public class CustomerController {
 
     @GetMapping
     public String showListPage(Model model) {
-        List<Customer> customers = customerService.findAll();
+        List<Customer> customers = customerService.findAllByDeleted(false);
         model.addAttribute("customers", customers);
 
         return "customer/list";
@@ -84,7 +84,7 @@ public class CustomerController {
     public String showTransferPage(@PathVariable Long senderId, Model model) {
 
         Customer sender = customerService.findById(senderId);
-        List<Customer> recipient = customerService.findAllWithoutId(senderId);
+        List<Customer> recipient = customerService.findAllWithoutId(senderId, false);
 
         Transfer transfer = new Transfer();
         transfer.setSender(sender);
@@ -161,7 +161,7 @@ public class CustomerController {
 
         Customer customer = customerService.findById(customerId);
 
-        if (deposit.getTransactionAmount().compareTo(BigDecimal.ZERO) > 0) {
+        if (deposit.getTransactionAmount().compareTo(BigDecimal.ZERO) > 0 && !customer.getDeleted()) {
             deposit.setCustomer(customer);
 
             model.addAttribute("deposit", deposit);
@@ -184,7 +184,7 @@ public class CustomerController {
     public String withdraw(@PathVariable Long customerId, @ModelAttribute Withdraw withdraw, Model model) {
         Customer customer = customerService.findById(customerId);
 
-        if (customerService.findById(customerId).getBalance().compareTo(withdraw.getAmount()) >= 0 && withdraw.getAmount().compareTo(BigDecimal.ZERO) > 0) {
+        if (customerService.findById(customerId).getBalance().compareTo(withdraw.getAmount()) >= 0 && withdraw.getAmount().compareTo(BigDecimal.ZERO) > 0 && !customer.getDeleted()) {
             withdraw.setCustomer(customer);
 
             model.addAttribute("withdraw", withdraw);
@@ -212,8 +212,8 @@ public class CustomerController {
         transfer.setSender(sender);
         transfer.setRecipient(recipient);
 
-        if (customerService.findById(senderId).getBalance().compareTo(transactionAmount) >= 0 && transactionAmount.compareTo(BigDecimal.ZERO) > 0) {
-
+        if (customerService.findById(senderId).getBalance().compareTo(transactionAmount) >= 0 && transactionAmount.compareTo(BigDecimal.ZERO) > 0 && !transfer.getSender().getDeleted()) {
+            transfer.setTransactionAmount(transactionAmount);
             customerService.processTransfer(transfer);
             model.addAttribute("success", true);
             model.addAttribute("message", "Transfer successfully");
@@ -225,7 +225,7 @@ public class CustomerController {
 
         }
 
-        List<Customer> recipients = customerService.findAllWithoutId(senderId);
+        List<Customer> recipients = customerService.findAllWithoutId(senderId, false);
         model.addAttribute("recipients", recipients);
         return "customer/transfer";
     }

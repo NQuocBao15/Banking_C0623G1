@@ -1,7 +1,7 @@
 package com.example.bankingc06.service.withdraw;
 
 import com.example.bankingc06.model.Withdraw;
-import com.example.bankingc06.repository.IWithdrawRepository;
+import com.example.bankingc06.repository.WithdrawRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +12,7 @@ import java.util.List;
 @Transactional
 public class WithdrawService implements IWithdrawService{
     @Autowired
-    private IWithdrawRepository withdrawRepository;
+    private WithdrawRepository withdrawRepository;
 
     @Override
     public List<Withdraw> findAll() {
