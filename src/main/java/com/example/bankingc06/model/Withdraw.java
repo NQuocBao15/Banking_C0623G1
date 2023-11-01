@@ -30,6 +30,7 @@ public class Withdraw {
     @Column(nullable = false)
     private BigDecimal amount;
 
+    @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private Boolean deleted;
 
     private LocalDateTime createAt;

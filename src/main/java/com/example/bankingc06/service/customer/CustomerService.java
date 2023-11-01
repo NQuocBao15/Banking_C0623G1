@@ -47,21 +47,13 @@ public class CustomerService implements ICustomerService {
 
     @Override
     public void create(Customer customer) {
-        customer.setBalance(BigDecimal.ZERO);
-        customer.setDeleted(false);
-
         customerRepository.save(customer);
     }
 
     @Override
     public void update(Long id, Customer customer) {
-        Optional<Customer> existingCustomer = Optional.ofNullable(findById(id));
-        Customer customerUpdate = existingCustomer.get();
-        customerUpdate.setFullName(customer.getFullName());
-        customerUpdate.setEmail(customer.getEmail());
-        customerUpdate.setPhone(customer.getPhone());
-        customerUpdate.setAddress(customer.getAddress());
-        customerRepository.save(customerUpdate);
+        customer.setId(id);
+        customerRepository.save(customer);
     }
 
     @Override
@@ -74,24 +66,18 @@ public class CustomerService implements ICustomerService {
 
     @Override
     public void deposit(Deposit deposit) {
-        depositRepository.save(deposit);
-        BigDecimal newBalance = deposit.getTransactionAmount().add(deposit.getCustomer().getBalance());
-        deposit.getCustomer().setBalance(newBalance);
-
         deposit.setCreateAt(LocalDateTime.now());
-
-        customerRepository.save(deposit.getCustomer());
+        depositRepository.incrementBalance(deposit.getCustomer().getId(),deposit.getTransactionAmount());
+        depositRepository.save(deposit);
     }
 
     @Override
     public void withdraw(Withdraw withdraw) {
-        withdrawRepository.save(withdraw);
-        BigDecimal newBalance = withdraw.getCustomer().getBalance().subtract(withdraw.getAmount());
-        withdraw.getCustomer().setBalance(newBalance);
-
         withdraw.setCreateAt(LocalDateTime.now());
 
-        customerRepository.save(withdraw.getCustomer());
+        withdrawRepository.decrementBalance(withdraw.getCustomer().getId(), withdraw.getAmount());
+
+        withdrawRepository.save(withdraw);
     }
 
     @Override

@@ -43,6 +43,7 @@ public class Transfer {
     @Column(nullable = false)
     private BigDecimal transactionAmount;
 
+    @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private Boolean deleted;
 
     private LocalDateTime createAt;

@@ -161,15 +161,18 @@ public class CustomerController {
 
         Customer customer = customerService.findById(customerId);
 
+        deposit.setCustomer(customer);
+
         if (deposit.getTransactionAmount().compareTo(BigDecimal.ZERO) > 0 && !customer.getDeleted()) {
+            customerService.deposit(deposit);
+            customer = customerService.findById(customerId);
             deposit.setCustomer(customer);
 
             model.addAttribute("deposit", deposit);
             model.addAttribute("success", true);
             model.addAttribute("message", "Deposit successfully");
-            customerService.deposit(deposit);
         } else {
-
+            deposit.setCustomer(customer);
             model.addAttribute("deposit", deposit);
             model.addAttribute("success", false);
             model.addAttribute("message", "Deposit unsuccessfully");
@@ -183,22 +186,25 @@ public class CustomerController {
     @PostMapping("/withdraw/{customerId}")
     public String withdraw(@PathVariable Long customerId, @ModelAttribute Withdraw withdraw, Model model) {
         Customer customer = customerService.findById(customerId);
+        withdraw.setCustomer(customer);
 
         if (customerService.findById(customerId).getBalance().compareTo(withdraw.getAmount()) >= 0 && withdraw.getAmount().compareTo(BigDecimal.ZERO) > 0 && !customer.getDeleted()) {
+            customerService.withdraw(withdraw);
+            customer = customerService.findById(customerId);
             withdraw.setCustomer(customer);
 
             model.addAttribute("withdraw", withdraw);
             model.addAttribute("success", true);
             model.addAttribute("message", "Withdraw successfully");
-            customerService.withdraw(withdraw);
 
         } else {
+            withdraw.setCustomer(customer);
             model.addAttribute("withdraw", withdraw);
             model.addAttribute("success", false);
             model.addAttribute("message", "Withdraw unsuccessfully");
         }
 
-        withdraw.setAmount(null);
+        withdraw.setAmount(BigDecimal.ZERO);
 
         return "customer/withdraw";
     }
@@ -215,14 +221,21 @@ public class CustomerController {
         if (customerService.findById(senderId).getBalance().compareTo(transactionAmount) >= 0 && transactionAmount.compareTo(BigDecimal.ZERO) > 0 && !transfer.getSender().getDeleted()) {
             transfer.setTransactionAmount(transactionAmount);
             customerService.processTransfer(transfer);
+
+            sender = customerService.findById(senderId);
+            recipient = customerService.findById(recipientId);
+
+            transfer.setSender(sender);
+            transfer.setRecipient(recipient);
+
             model.addAttribute("success", true);
             model.addAttribute("message", "Transfer successfully");
-
         } else {
+            transfer.setSender(sender);
+            transfer.setRecipient(recipient);
 
             model.addAttribute("success", false);
             model.addAttribute("message", "Transfer unsuccessfully");
-
         }
 
         List<Customer> recipients = customerService.findAllWithoutId(senderId, false);

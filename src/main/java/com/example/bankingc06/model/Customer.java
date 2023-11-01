@@ -16,6 +16,7 @@ public class Customer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(updatable = false)
     private Long id;
 
     @Column(nullable = false)
@@ -31,9 +32,9 @@ public class Customer {
     private String address;
 
     @Column(nullable = false)
-    private BigDecimal balance;
+    private BigDecimal balance = BigDecimal.ZERO;
 
-    @Column(nullable = false)
-    private Boolean deleted;
+    @Column(nullable = false, columnDefinition = "TINYINT(1)")
+    private Boolean deleted = false;
 
 }
